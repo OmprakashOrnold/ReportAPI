@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="24479578-5fae-463c-b26a-40b504d70c90">
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="courseName" class="java.lang.String"/>
+	<field name="location" class="java.lang.String"/>
+	<field name="courseCategory" class="java.lang.String"/>
+	<field name="facultyName" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<staticText>
+				<reportElement x="50" y="0" width="70" height="20" uuid="fbac8b60-72e4-431f-9f9e-7cf16a29d443"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Course Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="0" width="70" height="20" uuid="623d8ac3-9887-4d54-bb92-f258e7a129e5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Location]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="190" y="0" width="70" height="20" uuid="a4dc30ae-8276-4067-95f8-5e2760767ac8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Course Category]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="50" y="20" width="70" height="20" uuid="e7b6f55c-ddb6-40f5-9a24-fcc92d78a3d2"/>
+				<textFieldExpression><![CDATA[$F{courseName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="20" width="70" height="20" uuid="7bc177fc-e3f5-4c6c-afd0-c713a4fbbc67"/>
+				<textFieldExpression><![CDATA[$F{location}}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="20" width="70" height="20" uuid="fef9b070-4dd7-4047-9bad-63cca0a7cf5d"/>
+				<textFieldExpression><![CDATA[$F{courseCategory}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: ReportAPI
+  datasource:
+    url: jdbc:mysql://localhost:3306/reportsdb
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+server:
+  port: 4041
