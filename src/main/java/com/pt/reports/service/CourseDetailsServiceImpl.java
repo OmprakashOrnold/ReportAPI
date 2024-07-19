@@ -7,8 +7,6 @@ import com.pt.reports.model.SearchResponse;
 import com.pt.reports.repository.CourseDetailsRepo;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -71,16 +69,10 @@ public class CourseDetailsServiceImpl implements CourseDetailsService {
     }
 
     @Override
-    public byte[] generatePdfReport(SearchRequest searchRequest ) throws  Exception {
-        List<SearchResponse> searchResponseList = searchCoursesByFilters( searchRequest );
-        byte[] reportContent = jasperReportService.getObjectReport(searchResponseList, "pdf");
-        return reportContent;
+    public void  generateReportToDownload(SearchRequest searchRequest, String format, HttpServletResponse httpServletResponse) throws  Exception {
+        String reportName = "item-report";
+        List<SearchResponse> searchResponses= searchCoursesByFilters( searchRequest );
+        jasperReportService.generateReport(searchResponses, format, reportName ,httpServletResponse);
     }
 
-    @Override
-    public  byte[] generateExcelReport(SearchRequest searchRequest) throws  Exception {
-        List<SearchResponse> searchResponseList = searchCoursesByFilters( searchRequest );
-        byte[] reportContent = jasperReportService.getObjectReport(searchResponseList, ".xls");
-        return reportContent;
-    }
 }

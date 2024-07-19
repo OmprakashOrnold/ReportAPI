@@ -17,8 +17,5 @@ public interface CourseDetailsService {
     Set<String> showAllFaculties();
     Set<String> showAllTrainingModes();
     List<SearchResponse> searchCoursesByFilters(SearchRequest searchRequest);
-    byte[] generatePdfReport(SearchRequest searchRequest) throws  Exception ;
-    byte[] generateExcelReport(SearchRequest searchRequest)  throws  Exception ;
-
-
+    void  generateReportToDownload(SearchRequest searchRequest, String format, HttpServletResponse httpServletResponse) throws  Exception;
 }

@@ -1,59 +1,68 @@
 package com.pt.reports.jasper;
 
-import com.pt.reports.model.SearchResponse;
-import net.sf.jasperreports.engine.*;
+import com.pt.reports.utils.JasperReportUtil;
+import jakarta.servlet.http.HttpServletResponse;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.util.JRLoader;
-import net.sf.jasperreports.engine.util.JRSaver;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Om Prakash Peddamadthala
- * @version 1.0
- * @since 7/16/2024
- */
 @Service
 public class JasperReportService {
-    public byte[] getObjectReport(List<SearchResponse> objects, String format) {
 
-        JasperReport jasperReport;
-
-        try {
-            jasperReport = (JasperReport)
-                    JRLoader.loadObject( ResourceUtils.getFile("item-report.jasper"));
-        } catch (FileNotFoundException | JRException e) {
-            try {
-                File file = ResourceUtils.getFile("classpath:item-report.jrxml");
-                jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
-                JRSaver.saveObject(jasperReport, "item-report.jasper");
-            } catch (FileNotFoundException | JRException ex) {
-                throw new RuntimeException(e);
-            }
-        }
-
+    public void generateReport(List<?> objects, String format, String reportName, HttpServletResponse response) {
+        JasperReport jasperReport = getJasperReport(reportName);
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(objects);
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("title", "Item Report");
-        JasperPrint jasperPrint = null;
-        byte[] reportContent;
+        Map<String, Object> parameters = createParameters(reportName);
 
         try {
-            jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-            switch (format) {
-                case "pdf" -> reportContent = JasperExportManager.exportReportToPdf(jasperPrint);
-                case "xml" -> reportContent = JasperExportManager.exportReportToXml(jasperPrint).getBytes();
-                default -> throw new RuntimeException("Unknown report format");
-            }
-        } catch (JRException e) {
-            throw new RuntimeException(e);
+            JasperPrint jasperPrint = fillReport(jasperReport, parameters, dataSource);
+            exportReport(jasperPrint, format, reportName, response);
+        } catch (JRException | IOException e) {
+            throw new RuntimeException("Failed to generate or export report", e);
         }
-        return reportContent;
+    }
+
+    private JasperReport getJasperReport(String reportName) {
+        try {
+            JasperReport jasperReport = JasperReportUtil.loadCompiledReport(reportName);
+            if (jasperReport == null) {
+                jasperReport = JasperReportUtil.compileReport(reportName);
+            }
+            return jasperReport;
+        } catch (IOException | JRException e) {
+            throw new RuntimeException("Failed to load or compile Jasper report", e);
+        }
+    }
+
+    private Map<String, Object> createParameters(String reportName) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("title", reportName);
+        return parameters;
+    }
+
+    private JasperPrint fillReport(JasperReport jasperReport, Map<String, Object> parameters, JRBeanCollectionDataSource dataSource) throws JRException {
+        return JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+    }
+
+    private void exportReport(JasperPrint jasperPrint, String format, String reportName, HttpServletResponse response) throws JRException, IOException {
+        switch (format.toLowerCase()) {
+            case "pdf":
+                JasperReportUtil.exportToPdf(jasperPrint, reportName, response);
+                break;
+            case "xls":
+            case "xlsx":
+                JasperReportUtil.exportToXlsx(jasperPrint, reportName, response);
+                break;
+            default:
+                throw new RuntimeException("Unknown report format");
+        }
     }
 }

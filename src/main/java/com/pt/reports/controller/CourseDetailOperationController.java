@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/repoting/api")
-public class CourseDetailOperationController {
+public class CourseDetailOperationController<downloadFormat> {
 
     private final CourseDetailsService courseDetailsService ;
 
@@ -62,40 +62,14 @@ public class CourseDetailOperationController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
-    @PostMapping("/download-pdf")
-    public ResponseEntity<?> generatePdfReport(@RequestBody SearchRequest searchRequest) {
+    @PostMapping("/download")
+    public void generatePdfReport(@RequestBody SearchRequest searchRequest,@RequestParam String downloadFormat, HttpServletResponse httpServletResponse) {
         try {
-            byte[] reportContent = courseDetailsService.generatePdfReport(searchRequest);
-            ByteArrayResource resource = new ByteArrayResource( reportContent );
-            return ResponseEntity.ok()
-                    .contentType( MediaType.APPLICATION_OCTET_STREAM )
-                    .contentLength( resource.contentLength() )
-                    .header( HttpHeaders.CONTENT_DISPOSITION,
-                            ContentDisposition.attachment()
-                                    .filename( "item-report." + "pdf" )
-                                    .build().toString() )
-                    .body( resource );
+            courseDetailsService.generateReportToDownload(searchRequest,downloadFormat,httpServletResponse);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body( e.getMessage() );
+            e.printStackTrace();
         }
     }
 
-    @PostMapping("/download-xls")
-    public ResponseEntity<?> generateExcelReport(@RequestBody SearchRequest searchRequest) {
-        try {
-            byte[] reportContent = courseDetailsService.generatePdfReport(searchRequest);
-            ByteArrayResource resource = new ByteArrayResource( reportContent );
-            return ResponseEntity.ok()
-                    .contentType( MediaType.APPLICATION_OCTET_STREAM )
-                    .contentLength( resource.contentLength() )
-                    .header( HttpHeaders.CONTENT_DISPOSITION,
-                            ContentDisposition.attachment()
-                                    .filename( "item-report." + "xls" )
-                                    .build().toString() )
-                    .body( resource );
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body( e.getMessage() );
-        }
-    }
 
 }
